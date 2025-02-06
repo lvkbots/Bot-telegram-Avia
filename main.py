@@ -2,13 +2,20 @@ import os
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 import time
+import logging
 
+# Configuration des logs
+logging.basicConfig(level=logging.INFO)
+
+# Token Telegram
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
+
+# Configuration du bot
 bot = telebot.TeleBot(TOKEN)
 
-# Configuration pour éviter les conflits
+# Supprimer le webhook et attendre
 bot.remove_webhook()
-time.sleep(1)
+time.sleep(0.1)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -27,5 +34,14 @@ def send_welcome(message):
     
     bot.send_message(message.chat.id, welcome_text, parse_mode="Markdown", reply_markup=markup)
 
-print("Bot démarré!")
-bot.polling(none_stop=True, interval=0)
+def main():
+    logging.info("Bot démarré!")
+    try:
+        bot.polling(none_stop=True, interval=0, timeout=30)
+    except Exception as e:
+        logging.error(f"Erreur lors du polling : {e}")
+        time.sleep(15)
+        main()
+
+if __name__ == '__main__':
+    main()
