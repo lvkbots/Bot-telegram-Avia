@@ -7,7 +7,7 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # Utilisation de la variable d'environnement pour le token
-TOKEN = os.environ.get('7184666905:AAFd2arfmIFZ86cp9NNVp57dKkH6hAVi4iM')
+TOKEN = os.environ.get('TELEGRAM_TOKEN')
 bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
