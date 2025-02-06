@@ -1,21 +1,16 @@
 import os
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-import time
+from flask import Flask, request
 import logging
 
-# Configuration des logs
-logging.basicConfig(level=logging.INFO)
-
-# Token Telegram
+# Configuration
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
+PORT = int(os.environ.get('PORT', 5000))
 
-# Configuration du bot
+# Initialisation
 bot = telebot.TeleBot(TOKEN)
-
-# Supprimer le webhook et attendre
-bot.remove_webhook()
-time.sleep(0.1)
+server = Flask(__name__)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -34,14 +29,18 @@ def send_welcome(message):
     
     bot.send_message(message.chat.id, welcome_text, parse_mode="Markdown", reply_markup=markup)
 
-def main():
-    logging.info("Bot démarré!")
-    try:
-        bot.polling(none_stop=True, interval=0, timeout=30)
-    except Exception as e:
-        logging.error(f"Erreur lors du polling : {e}")
-        time.sleep(15)
-        main()
+@server.route('/' + TOKEN, methods=['POST'])
+def webhook():
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return "OK"
 
-if __name__ == '__main__':
-    main()
+@server.route('/')
+def webhook_setup():
+    bot.remove_webhook()
+    bot.set_webhook(url=f'https://votre-app-render.onrender.com/{TOKEN}')
+    return "Webhook configuré"
+
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=PORT)
