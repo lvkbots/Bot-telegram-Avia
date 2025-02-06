@@ -1,1 +1,2 @@
-first bot
+pyTelegramBotAPI==4.14.0
+python-dotenv
