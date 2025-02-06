@@ -5,7 +5,7 @@ from flask import Flask, request
 import logging
 
 # Configuration
-TOKEN = os.environ.get('TELEGRAM_TOKEN')
+TOKEN = os.environ.get('7184666905:AAFd2arfmIFZ86cp9NNVp57dKkH6hAVi4iM')
 PORT = int(os.environ.get('PORT', 5000))
 
 # Initialisation
@@ -16,7 +16,7 @@ server = Flask(__name__)
 def send_welcome(message):
     welcome_text = (
         "Bonjour. Je m'appelle Mustafa Zulu 🖥️\n\n"
-        "Mon équipe et moi-même avons développé un algorithme de programme qui calcule le prochain coef dans le jeu Aviator "
+        "Mon équipe a développé un algorithme pour calculer le prochain coef dans Aviator "
         "avec une précision de *99,997%* ✅\n\n"
         "Nous vous apprendrons à utiliser ce programme pour *gagner 120 000 dès aujourd'hui* 💸💰\n\n"
         "Écrivez-moi et je vous donnerai le programme 🎁"
@@ -39,7 +39,7 @@ def webhook():
 @server.route('/')
 def webhook_setup():
     bot.remove_webhook()
-    bot.set_webhook(url=f'https://votre-app-render.onrender.com/{TOKEN}')
+    bot.set_webhook(url=f'https://{os.environ.get("RENDER_EXTERNAL_URL")}/{TOKEN}')
     return "Webhook configuré"
 
 if __name__ == "__main__":
