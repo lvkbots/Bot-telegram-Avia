@@ -1,4 +1,3 @@
-Flask==2.2.3
-pyTelegramBotAPI==4.0.0
-gunicorn==20.1.0
-Werkzeug==2.2.2
+python-telegram-bot==20.7  # Bibliothèque pour interagir avec Telegram
+python-dotenv==1.0.0       # Gérer les variables d'environnement
+Flask==2.0.1               # Serveur web pour garder le bot actif
