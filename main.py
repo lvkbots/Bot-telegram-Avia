@@ -1,31 +1,20 @@
-# render.yaml
-services:
-  - type: web
-    name: telegram-bot
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python main.py
-
-# requirements.txt
-python-telegram-bot==20.7
-python-dotenv==1.0.0
-Flask==2.0.1
-
-# main.py
 import os
+import logging
 from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
-import logging
 
 # Configuration du logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 logger = logging.getLogger(__name__)
 
-# Configuration Flask
+# Initialisation de Flask
 app = Flask(__name__)
 
-# Configuration Telegram
+# Récupération du token depuis les variables d'environnement
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -50,22 +39,19 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == 'about':
         await query.message.reply_text("Je suis un bot créé pour vous servir!")
 
-def main():
-    application = Application.builder().token(TOKEN).build()
-    
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CallbackQueryHandler(button_callback))
-    
-    application.run_polling()
-
 @app.route('/')
 def home():
     return 'Bot is running!'
 
+def run_bot():
+    application = Application.builder().token(TOKEN).build()
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CallbackQueryHandler(button_callback))
+    application.run_polling()
+
 if __name__ == '__main__':
-    # Démarrage du bot en arrière-plan
     import threading
-    bot_thread = threading.Thread(target=main)
+    bot_thread = threading.Thread(target=run_bot)
     bot_thread.start()
     
     # Démarrage du serveur Flask
